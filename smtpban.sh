@@ -67,7 +67,7 @@ awk -F - -vDT="$(date --date="$PARSE_MINS" "+%b %_d %H:%M:%S")" ' DT < $1' $logf
 # should be set to this variable in crontab
 # e.g. 5 * * * * PARSE_COUNTS="3" /path/to/smtpban.sh
 parsed_ips=$(mktemp)
-cat $parsed_logs | grep "authentication failed" | grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq -c | awk -v limit="$PARSE_COUNTS" '$1 > limit{print $2}' > $parsed_ips
+cat $parsed_logs | grep -E 'authentication failed|too many errors after AUTH'| grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}" | sort | uniq -c | awk -v limit="$PARSE_COUNTS" '$1 > limit{print $2}' > $parsed_ips
 
 # Merge and sort blocked IP addresses
 blocked_ips=$(mktemp)
